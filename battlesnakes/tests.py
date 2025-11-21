@@ -10,6 +10,7 @@ in the folder where this file exists:
     python src/tests.py -v
 
 """
+
 import unittest
 
 import logic
