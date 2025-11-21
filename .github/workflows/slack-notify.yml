@@ -3,64 +3,28 @@ name: Slack Notifications
 on:
   workflow_run:
     workflows: ["CI — Lint / Build / Test"]
-    types:
+    types: 
       - completed
 
 jobs:
   notify:
     runs-on: ubuntu-latest
-    steps:
-      - name: Send Slack notification
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          STATUS="${{ github.event.workflow_run.conclusion }}"
-          BRANCH="${{ github.event.workflow_run.head_branch }}"
-          LOG_URL="${{ github.event.workflow_run.html_url }}"
-          WORKFLOW="${{ github.event.workflow_run.name }}"
 
-          # Pick a color based on status
-          if [ "$STATUS" = "success" ]; then
-            COLOR="#36a64f"   # green
-            EMOJI=":white_check_mark:"
+    steps:
+      - name: Set status message
+        run: |
+          if [ "${{ github.event.workflow_run.conclusion }}" = "success" ]; then
+            STATUS="SUCCESS"
           else
-            COLOR="#ff0000"   # red
-            EMOJI=":x:"
+            STATUS="FAILED"
           fi
 
-          # Build attachment JSON payload
-          PAYLOAD=$(jq -n \
-            --arg color "$COLOR" \
-            --arg workflow "$WORKFLOW" \
-            --arg branch "$BRANCH" \
-            --arg status "$STATUS" \
-            --arg logs "$LOG_URL" \
-            --arg emoji "$EMOJI" \
-            '{
-              attachments: [
-                {
-                  color: $color,
-                  blocks: [
-                    {
-                      type: "section",
-                      text: {
-                        type: "mrkdwn",
-                        text: "\($emoji) *Workflow:* \($workflow)\n*Branch:* `\($branch)`\n*Status:* *\($status)*"
-                      }
-                    },
-                    {
-                      type: "section",
-                      text: {
-                        type: "mrkdwn",
-                        text: "<\($logs)|View full logs>"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }')
+          echo "STATUS=$STATUS" >> $GITHUB_ENV
 
-          # Send to Slack
+      - name: Send Slack Notification
+        run: |
+          MESSAGE="CI workflow finished.\nStatus: $STATUS\nRepo: ${{ github.repository }}\nBranch: ${{ github.event.workflow_run.head_branch }}\nRun: ${{ github.event.workflow_run.html_url }}"
+          
           curl -X POST -H 'Content-type: application/json' \
-            --data "$PAYLOAD" \
-            $SLACK_WEBHOOK_URL
+            --data "{ \"text\": \"${MESSAGE}\" }" \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
