@@ -171,7 +171,9 @@ class ChooseMoveTest(unittest.TestCase):
                 "height": 3,
                 "width": 3,
                 "food": [{"x": 2, "y": 2}],
-                "snakes": [{"id": "snake-123", "body": [{"x": 1, "y": 1}, {"x": 0, "y": 1}]}],
+                "snakes": [
+                    {"id": "snake-123", "body": [{"x": 1, "y": 1}, {"x": 0, "y": 1}]}
+                ],
             },
             "game": {"id": "game-1"},
             "turn": 0,
