@@ -65,12 +65,11 @@ def identify_server(response):
     return response
 
 
-
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
 host = "0.0.0.0"
 port = int(os.environ.get("PORT", "8080"))
 
 print(f"\nRunning Battlesnake server at http://{host}:{port}")
-app.env = 'development'
+app.env = "development"
 app.run(host=host, port=port, debug=True)
