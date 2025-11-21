@@ -8,8 +8,6 @@ To run the unit tests, use:
 """
 
 import unittest
-import random
-
 import logic
 
 
