@@ -13,9 +13,6 @@ permissions:
   contents: read
 
 jobs:
-  # -------------------
-  # Lint Job
-  # -------------------
   lint:
     name: Run flake8
     runs-on: ubuntu-latest
@@ -28,7 +25,7 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install flake8
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install flake8
@@ -37,9 +34,6 @@ jobs:
         run: |
           flake8 --max-line-length=110 .
 
-  # -------------------
-  # Build Job
-  # -------------------
   build:
     name: Install dependencies (Build)
     runs-on: ubuntu-latest
@@ -58,11 +52,8 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f battlesnakes/requirements.txt ]; then pip install -r battlesnakes/requirements.txt; fi
 
-  # -------------------
-  # Test Job
-  # -------------------
   test:
-    name: Run unittest and Notify Slack
+    name: Run unittest
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -79,23 +70,6 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f battlesnakes/requirements.txt ]; then pip install -r battlesnakes/requirements.txt; fi
 
-      - name: Run unit tests and capture output
-        id: unittest
+      - name: Run unit tests
         run: |
-          mkdir -p test-reports
-          python -m unittest discover -s battlesnakes -p "tests.py" -v > test-reports/output.log 2>&1 || echo "Tests failed"
-
-      - name: Send Slack notification
-        if: always()
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          STATUS="SUCCESS"
-          if grep -q "FAILED" test-reports/output.log; then
-            STATUS="FAILURE"
-          fi
-          # Truncate output to first 50 lines to avoid huge messages
-          LOG=$(head -n 50 test-reports/output.log | sed 's/"/\\"/g' | tr '\n' '\\n')
-          curl -X POST -H 'Content-type: application/json' \
-            --data "{\"text\":\"CI job for branch ${{ github.ref_name }} finished with status: $STATUS\\n\`\`\`$LOG\`\`\`\"}" \
-            $SLACK_WEBHOOK_URL
+          python -m unittest discover -s battlesnakes -p "tests.py" -v

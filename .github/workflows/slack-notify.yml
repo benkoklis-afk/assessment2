@@ -1,0 +1,27 @@
+name: Slack Notifications
+
+on:
+  workflow_run:
+    workflows: ["CI — Lint / Build / Test"]
+    types:
+      - completed
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack notification
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          CI_WORKFLOW_NAME="${{ github.workflow }}"
+          STATUS="${{ github.event.workflow_run.conclusion }}"
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          LOG_URL="${{ github.event.workflow_run.html_url }}"
+
+          MESSAGE="CI workflow '$CI_WORKFLOW_NAME' for branch '$BRANCH' finished with status: $STATUS\nSee details: $LOG_URL"
+
+          # Send to Slack
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$(jq -n --arg text "$MESSAGE" '{text: $text}')" \
+            $SLACK_WEBHOOK_URL
