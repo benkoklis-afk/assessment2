@@ -1,0 +1,5 @@
+[flake8]
+max-line-length = 110
+extend-ignore =
+    # optional ignores you allow (list only if justified)
+exclude = .venv,venv,__pycache__,docs,build,dist
