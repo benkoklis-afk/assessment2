@@ -14,14 +14,53 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          CI_WORKFLOW_NAME="${{ github.workflow }}"
           STATUS="${{ github.event.workflow_run.conclusion }}"
           BRANCH="${{ github.event.workflow_run.head_branch }}"
           LOG_URL="${{ github.event.workflow_run.html_url }}"
+          WORKFLOW="${{ github.event.workflow_run.name }}"
 
-          MESSAGE="CI workflow '$CI_WORKFLOW_NAME' for branch '$BRANCH' finished with status: $STATUS\nSee details: $LOG_URL"
+          # Pick a color based on status
+          if [ "$STATUS" = "success" ]; then
+            COLOR="#36a64f"   # green
+            EMOJI=":white_check_mark:"
+          else
+            COLOR="#ff0000"   # red
+            EMOJI=":x:"
+          fi
+
+          # Build attachment JSON payload
+          PAYLOAD=$(jq -n \
+            --arg color "$COLOR" \
+            --arg workflow "$WORKFLOW" \
+            --arg branch "$BRANCH" \
+            --arg status "$STATUS" \
+            --arg logs "$LOG_URL" \
+            --arg emoji "$EMOJI" \
+            '{
+              attachments: [
+                {
+                  color: $color,
+                  blocks: [
+                    {
+                      type: "section",
+                      text: {
+                        type: "mrkdwn",
+                        text: "\($emoji) *Workflow:* \($workflow)\n*Branch:* `\($branch)`\n*Status:* *\($status)*"
+                      }
+                    },
+                    {
+                      type: "section",
+                      text: {
+                        type: "mrkdwn",
+                        text: "<\($logs)|View full logs>"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }')
 
           # Send to Slack
           curl -X POST -H 'Content-type: application/json' \
-            --data "$(jq -n --arg text "$MESSAGE" '{text: $text}')" \
+            --data "$PAYLOAD" \
             $SLACK_WEBHOOK_URL
