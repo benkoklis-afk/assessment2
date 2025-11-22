@@ -64,8 +64,8 @@ jobs:
         run: pip install -r battlesnakes/requirements.txt
 
       - name: Verify project builds
-        working-directory: battlesnakes
-        run: python -c "import main; import logic"
+        run: |
+         PYTHONPATH=./battlesnakes python -c "import main; import logic"
    
 
 
