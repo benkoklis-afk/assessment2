@@ -1,0 +1,28 @@
+name: Slack Notifications
+
+on:
+  workflow_run:
+    workflows: ["CI — Lint / Build / Test"]  # name of your CI workflow
+    types: [completed]
+
+jobs:
+  slack-message:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build message
+        run: |
+          if [ "${{ github.event.workflow_run.conclusion }}" = "success" ]; then
+            STATUS="SUCCESS"
+          else
+            STATUS="FAILED"
+          fi
+          echo "SLACK_MESSAGE=CI: $STATUS | Branch: ${{ github.event.workflow_run.head_branch }} | Run: ${{ github.event.workflow_run.html_url }}" >> $GITHUB_ENV
+
+      - name: Send to Slack
+        env:
+          SLACK_MESSAGE: ${{ env.SLACK_MESSAGE }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: sh .github/scripts/slackpost.sh
