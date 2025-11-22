@@ -65,6 +65,8 @@ jobs:
 
       - name: Verify project builds
         run: python -m compileall battlesnakes
+     
+      - name: Verify project import verification, runtime errors test
         run: python -c "import battlesnakes.main; import battlesnakes.logic"
    
 
