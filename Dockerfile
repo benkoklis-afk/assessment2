@@ -1,8 +1,8 @@
-#latest version
-FROM alpine:3.22
+#latest version that doesnt enforce 668 error (external-managed enviroment requirement for pip)
+FROM alpine:3.16
 
-# Install Python and the required tools pip, wget
-RUN apk add --no-cache python3 py3-pip wget
+# Install Python and the required tools bash, wget
+RUN apk add --no-cache python3 bash wget
 
 # Work directory inside container
 WORKDIR /app
@@ -13,7 +13,7 @@ COPY . /app
 
 # Install Assignment requirements
 RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN python3 ./get-pip.py 
+RUN python3 get-pip.py 
 
 
 
