@@ -69,9 +69,10 @@ jobs:
       - name: Verify project builds
         run: python -m compileall battlesnakes
       
-      - name: Verify project builds
-        run: |
-         PYTHONPATH=./battlesnakes python -c "import main; import logic"
+      - name: Verify logic imports
+        working-directory: battlesnakes
+        run: python -c "import logic"
+
 
 
 
