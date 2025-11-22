@@ -37,6 +37,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-           ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest
-           ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:${{ github.ref_name }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest
+           
