@@ -64,7 +64,7 @@ jobs:
         run: pip install -r battlesnakes/requirements.txt
 
       - name: Verify project builds
-        run: python -m battlesnakes --help
+        run: python -c "import battlesnakes.main; import battlesnakes.logic"
 
 
   # Test Job
