@@ -1,3 +1,4 @@
+name: Docker BUild & Push
 # Triggered after the CI workflow completes
 on:
   workflow_run:
@@ -36,4 +37,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/battlesnake:latest
+          tags: |
+           ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest
+           ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:${{ github.sha }}
