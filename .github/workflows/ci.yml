@@ -65,7 +65,15 @@ jobs:
 
       - name: Verify project builds
         run: python -m compileall battlesnakes
-   
+     
+      - name: Verify project builds
+        run: python -m compileall battlesnakes
+      
+      - name: Verify logic imports
+        working-directory: battlesnakes
+        run: python -c "import logic"
+
+
 
 
   # Test Job
@@ -91,3 +99,5 @@ jobs:
 
       - name: Run tests with unittest
         run: python -m unittest discover -s battlesnakes -p "tests.py" -v
+        
+
