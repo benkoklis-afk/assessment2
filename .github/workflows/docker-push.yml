@@ -39,4 +39,4 @@ jobs:
           push: true
           tags: |
            ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest
-           ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:${{ github.sha }}
+           ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:${{ github.ref_name }}
