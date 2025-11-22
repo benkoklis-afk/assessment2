@@ -1,0 +1,19 @@
+#version is obsolete
+#version: '3' 
+services:
+
+         # defining the  service's name
+   battlesnakes:
+      build:
+         # context is set the available COPY files
+         context: .
+         # dockerfile points to the correct Dockerfile
+         dockerfile: docker/Production-Dockerfile
+      # naming the container
+      container_name: nick-battlesnake-server
+      # Port exposed at teh required port
+      ports:
+         - "8080:8080"
+      #container auto-restart actions(restart if it crashes, can be stopepd manually
+      restart: unless-stopped
+
