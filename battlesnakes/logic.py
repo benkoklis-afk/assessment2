@@ -1,6 +1,6 @@
 import random
 from typing import List, Dict
-{
+
 """
 This file can be a nice home for your Battlesnake's logic and helper functions.
 
