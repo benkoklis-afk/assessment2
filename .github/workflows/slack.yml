@@ -2,7 +2,7 @@ name: Slack Notifications
 
 on:
   workflow_run:
-    workflows: ["CI — Lint / Build / Test"]  # name of your CI workflow
+    workflows: ["CI Pipeline"]  # name of your CI workflow
     types: [completed]
 
 jobs:
