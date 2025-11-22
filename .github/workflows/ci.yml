@@ -13,6 +13,9 @@ on:
       - develop
       - main
 
+permissions:
+  contents: read
+
 jobs:
 
   # Linting Job
@@ -22,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -50,7 +53,7 @@ jobs:
     needs: lint   # Run after lint succeeds
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -75,7 +78,7 @@ jobs:
     needs: build   # Run after build succeeds
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
