@@ -15,14 +15,17 @@ jobs:
       - name: Build message
         run: |
           if [ "${{ github.event.workflow_run.conclusion }}" = "success" ]; then
-            STATUS="SUCCESS"
+            STATUS="SUCCESS ✅"
           else
-            STATUS="FAILED"
+            STATUS="FAILED ❌"
           fi
-          echo "SLACK_MESSAGE=CI: $STATUS | Branch: ${{ github.event.workflow_run.head_branch }} | Run: ${{ github.event.workflow_run.html_url }}" >> $GITHUB_ENV
+
+          MESSAGE="CI Status: $STATUS\nBranch: ${{ github.event.workflow_run.head_branch }}\nRun: ${{ github.event.workflow_run.html_url }}"
+          echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
 
       - name: Send to Slack
         env:
           SLACK_MESSAGE: ${{ env.SLACK_MESSAGE }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: sh .github/scripts/slackpost.sh
+
