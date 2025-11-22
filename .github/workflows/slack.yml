@@ -15,9 +15,9 @@ jobs:
       - name: Build message
         run: |
           if [ "${{ github.event.workflow_run.conclusion }}" = "success" ]; then
-            STATUS="SUCCESS ✅"
+            STATUS="SUCCESS :white_check_mark:"
           else
-            STATUS="FAILED ❌"
+            STATUS="FAILED :x:"
           fi
 
           MESSAGE="CI Status: $STATUS\nBranch: ${{ github.event.workflow_run.head_branch }}\nRun: ${{ github.event.workflow_run.html_url }}"
