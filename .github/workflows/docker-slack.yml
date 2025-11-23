@@ -20,7 +20,7 @@ jobs:
             STATUS="FAILED :x:"
           fi
 
-          MESSAGE="CI Status: $STATUS\nBranch: ${{ github.event.workflow_run.head_branch }}\nRun: ${{ github.event.workflow_run.html_url }}"
+          MESSAGE="Docker Status: $STATUS\nBranch: ${{ github.event.workflow_run.head_branch }}\nRun: ${{ github.event.workflow_run.html_url }}"
           echo "SLACK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
 
       - name: Send to Slack
