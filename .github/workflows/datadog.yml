@@ -13,14 +13,13 @@ jobs:
 
       #  Install Heroku CLI (multi-command, use `run: |`)
       - name: Install Heroku CLI
-        run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
+        run: run: curl https://cli-assets.heroku.com/install.sh | sh
 
       # Login to Heroku (single command, use `run:`)
       - name: Heroku login
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku auth:token
+        run: heroku container:login
 
       # Add Datadog log drain 
       - name: Add Datadog log drain
