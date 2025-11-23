@@ -1,4 +1,4 @@
-name: Slack Notifications
+name: Slack Notifications for Docker
 
 on:
   workflow_run:
