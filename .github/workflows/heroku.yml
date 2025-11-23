@@ -1,0 +1,59 @@
+name: Deploy to Heroku  # Workflow name
+
+on:
+  workflow_run:         # Trigger this workflow after another workflow completes
+    workflows: ["Docker Build & Push"]   # <-- The workflow you defined that builds/pushes Docker
+    types:
+      - completed        # Only when that workflow has finished
+
+jobs:
+  deploy:
+    # Only run if CI was successful
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Install Heroku CLI
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      #  Login to Heroku Container Registry
+      - name: Login to Heroku Container Registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+
+      # Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Pull Docker image from Docker Hub
+      - name: Pull Docker image
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest
+
+      # Tag the image for Heroku deployment
+      - name: Tag image for Heroku
+        run: docker tag ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
+
+      # Push the Docker image to Heroku
+      - name: Push image to Heroku
+        run: docker push registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
+
+      # Set Heroku stack to container (needed once per app)
+      - name: Set Heroku stack to container
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku stack:set container --app ${{ secrets.HEROKU_APP_NAME }}
+
+      # Release the Docker image on Heroku
+      - name: Release Docker image
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release web --app ${{ secrets.HEROKU_APP_NAME }}
