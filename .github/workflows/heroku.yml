@@ -1,11 +1,14 @@
 name: Deploy to Heroku  # Workflow name
 
 on:
-  workflow_dispatch: # manually triggerable
+  workflow_run:         # Trigger this workflow after another workflow completes
+    workflows: ["Docker Build & Push"]   # <-- The workflow you defined that builds/pushes Docker
+    types:
+      - completed        # Only when that workflow has finished
 
 jobs:
   deploy:
-    # Only run if CI was successful
+    # Only run if docker build was was successful
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
