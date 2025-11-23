@@ -1,5 +1,6 @@
 ---
 name: General Requirements
+about: task, question
 ---
 
 **Describe the Task**
