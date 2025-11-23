@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest a feature
+about: Suggest a feature &
 ---
 
 **Describe the feature**
