@@ -42,11 +42,11 @@ jobs:
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest
 
       # Tag the image for Heroku deployment
-      - name: Tag image for Heroku
+      - name: Release Docker image on Heroku
         run: |
-          docker tag \
-            ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest \
-            registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
+         heroku container:release web --app ${{ secrets.HEROKU_APP_NAME }}
+        env:
+         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
       # Push image to Heroku Container Registry
       - name: Push image to Heroku
