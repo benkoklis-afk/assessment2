@@ -13,7 +13,7 @@ jobs:
 
       #  Install Heroku CLI (multi-command, use `run: |`)
       - name: Install Heroku CLI
-        run: run: curl https://cli-assets.heroku.com/install.sh | sh
+        run: curl https://cli-assets.heroku.com/install.sh | sh
 
       # Login to Heroku (single command, use `run:`)
       - name: Heroku login
