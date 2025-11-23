@@ -6,46 +6,56 @@ on:
     types:
       - completed        # Only when that workflow has finished
 
+
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Only run if previous workflow succeeded
+    # Only run if CI was successful
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
-        # We need the code (or just Dockerfile) for context, though main work happens via CLI
 
+      # Install Heroku CLI
       - name: Install Heroku CLI
-        # Heroku CLI lets us run commands like pushing image, releasing app
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
 
+      # Login to Heroku Container Registry via CLI
       - name: Login to Heroku Container Registry
-        # If you're deploying via Docker image rather than code
+        # HEROKU_API_KEY is needed by Heroku CLI
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           heroku container:login
-       # Tag the image for Heroku and push to the “web” process
-      - name: Push Docker image to Heroku
-        env:
-          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
 
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest registry.heroku.com/${HEROKU_APP_NAME}/web
-          docker push registry.heroku.com/${HEROKU_APP_NAME}/web
-
-      - name: Release the image on Heroku
-        env:
-          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      # Pull your Docker image from Docker Hub
+      - name: Pull Docker image from Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Pull image
         run: |
-          heroku container:release web --app $HEROKU_APP_NAME
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest
 
-      - name: Verify deployment status
-        env:
-          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      # Tag the image for Heroku deployment
+      - name: Tag image for Heroku
         run: |
-          heroku ps --app $HEROKU_APP_NAME
+          docker tag \
+            ${{ secrets.DOCKERHUB_USERNAME }}/battlesnakes:latest \
+            registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
+
+      # Push image to Heroku Container Registry
+      - name: Push image to Heroku
+        run: |
+          docker push registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
+
+      # Release the new version on Heroku
+      - name: Release Docker image on Heroku
+        run: |
+          heroku container:release web \
+            --app ${{ secrets.HEROKU_APP_NAME }} \
+            --apikey ${{ secrets.HEROKU_API_KEY }}
