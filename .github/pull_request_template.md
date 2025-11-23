@@ -1,15 +1,11 @@
----
-name: Pull Request
----
+## Summary
 
-**Highlight the Purpose of the Pull Reuqest**
-<!-- Why is the Pull Request required -->
 
-**Describe the problem it solves**
-<!-- Why is the solved issue-->
+## What has changed?
+- Key changes
+- Add screenshots/logs if relevant
 
-**How was it tested**
-<!-- Test methodology -->
+##How was it tested
 - [ ] Local test
 - [ ] CI pipeline
 - [ ] Docker Test
@@ -17,11 +13,11 @@ name: Pull Request
 - Additional notes:
 
 
-**Related Issue**
+##Related Issue**
 <!-- The Issuethe pull request relates to -->
 - Relates to : #ISSUE_Number
 
-**Checklist**
+##Checklist
 <!--What took place-->
 - [ ] Linting Succesful
 - [ ] Code builds successfully
