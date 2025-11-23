@@ -1,10 +1,7 @@
 name: Deploy to Heroku  # Workflow name
 
 on:
-  workflow_run:         # Trigger this workflow after another workflow completes
-    workflows: ["Docker Build & Push"]   # <-- The workflow you defined that builds/pushes Docker
-    types:
-      - completed        # Only when that workflow has finished
+  workflow_dispatch: # manually triggerable
 
 jobs:
   deploy:
